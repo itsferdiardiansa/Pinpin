@@ -1,0 +1,20 @@
+{
+  "name": "pinpin",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "17.2.8",
+    "nx": "17.2.8"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "pnpm": {
+    "default": "7.3.0"
+  }
+}
