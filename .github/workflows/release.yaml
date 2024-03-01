@@ -1,0 +1,60 @@
+name: Release
+run-name: "release: ${{ inputs.workspace }}/${{ inputs.path }}"
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+on:
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: "Which workspace would you like to choose?"
+        required: true
+        type: choice
+        options:
+          - apps
+          - packages
+      type:
+        description: "What kind of version type would you like to release?"
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+      path:
+        description: "Type a release path directory"
+        type: string
+        required: true
+      ref:
+        description: "Released ref branch"
+        required: false
+        default: ""
+      commit_tag:
+        description: "Type the commit (SHA)"
+        type: string
+        required: false
+permissions: write-all
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      COMMIT_TAG: ${{ inputs.commit_tag }}
+      REF: ${{ inputs.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set current date
+        id: date
+        uses: Kaven-Universe/github-action-current-date-time@v1
+        with:
+          format: "YYYY-MM-DD"
+
+      - run: echo "BASE_REVISION=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - run: gh auth setup-git
+
+      - run: git config user.name "github-actions[bot]"
+      - run: git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - run: . ./scripts/generate-release-version.sh --type=${{ github.event.inputs.type }} --workspace=${{ github.event.inputs.workspace }} --path=${{ github.event.inputs.path }}

@@ -1,0 +1,44 @@
+name: Scanning Code
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.json"
+      - "docs/**"
+  schedule:
+    - cron: "0 0 * * 0"
+permissions:
+  contents: read
+jobs:
+  code-scanning:
+    permissions:
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage reports artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: ${{ vars.COVERAGE_NAME }}
+          path: ${{ vars.COVERAGE_PATH }}
+          workflow: test-coverage.yaml
+          search_artifacts: true
+
+      - name: Generate a sonar configuration
+        env:
+          SONAR_PROJECT_VERSION: ${{ vars.SONAR_PROJECT_VERSION }}
+          SONAR_PROJECT_NAME: ${{ secrets.SONAR_PROJECT_NAME }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          COVERAGE_FILE: ${{ vars.COVERAGE_FILE_LCOV }}
+        run: ./scripts/generate-sonar-properties.sh
+
+      - name: Run scanner
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
