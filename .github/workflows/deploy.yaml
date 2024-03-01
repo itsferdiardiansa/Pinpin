@@ -40,7 +40,7 @@ jobs:
       token: ${{ secrets.VERCEL_TOKEN }}
 
   deploy-users-svc:
-    if: inputs.users_svc == true && (github.ref == 'refs/heads/staging' || github.refs == 'refs/heads/main')
+    if: inputs.users_svc == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
     uses: ./.github/workflows/wc-deploy-schema.yaml
     with:
       environment: ${{ inputs.environment }}
