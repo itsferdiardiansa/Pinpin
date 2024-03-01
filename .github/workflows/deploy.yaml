@@ -3,7 +3,7 @@ run-name: 'deploy: ${{ github.sha }}'
 on:
   workflow_dispatch:
     inputs:
-      auth_service:
+      auth_svc:
         type: boolean
         required: true
         default: false
@@ -26,7 +26,7 @@ on:
           - production
 jobs:
   deploy-auth-svc:
-    if: inputs.auth_service == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+    if: inputs.auth_svc == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
     uses: ./.github/workflows/wc-deploy-schema.yml
     with:
       environment: ${{ inputs.environment }}
