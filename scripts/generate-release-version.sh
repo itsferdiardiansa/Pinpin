@@ -123,11 +123,12 @@ genereteVersion() {
 populateArguments() {
   for cmd in "$@";
   do
-    IFS=-= read -a formattedValue <<< "${cmd//, ,}"
+    cmd="${cmd:2}"
+    IFS="=" read -a formattedValue <<< "${cmd//, ,}"
     declare -p formattedValue
 
-    type="${formattedValue[2]}"
-    value="${formattedValue[3]}"
+    type="${formattedValue[0]}"
+    value="${formattedValue[1]}"
 
     commands[${type}]=${value}
   done
