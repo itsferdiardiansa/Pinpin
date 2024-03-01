@@ -3,21 +3,21 @@ run-name: 'deploy: ${{ github.sha }}'
 on:
   workflow_dispatch:
     inputs:
-      auth_service:
+      auth_svc:
         type: boolean
         required: true
         default: false
         description: Auth service
-      user_service:
+      users_svc:
         type: boolean
         required: true
         default: false
-        description: User service
-      post_service:
+        description: Users service
+      posts_svc:
         type: boolean
         required: true
         default: false
-        description: Post service
+        description: Posts service
       environment:
         type: choice
         description: Which server environment would you like to deploy?
@@ -25,44 +25,44 @@ on:
           - staging
           - production
 jobs:
-  deploy-auth-service:
-    if: inputs.auth_service == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+  deploy-auth-svc:
+    if: inputs.auth_svc == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
     uses: ./.github/workflows/wc-deploy-schema.yml
     with:
       environment: ${{ inputs.environment }}
       pre_built: true
       pre_built_cmd: |
         pnpm i
-        npx nx build @pinpin/auth-service
+        npx nx build @pinpin/auth-svc
     secrets:
       org_id: ${{ secrets.VERCEL_ORG_ID }}
       project_id: ${{ secrets.VERCEL_AUTH_SERVICE_ID }}
       token: ${{ secrets.VERCEL_TOKEN }}
 
-  deploy-user-service:
-    if: inputs.user_service == true && (github.ref == 'refs/heads/staging' || github.refs == 'refs/heads/main')
+  deploy-users-svc:
+    if: inputs.users_svc == true && (github.ref == 'refs/heads/staging' || github.refs == 'refs/heads/main')
     uses: ./.github/workflows/wc-deploy-schema.yml
     with:
       environment: ${{ inputs.environment }}
       pre_built: true
       pre_built_cmd: |
         pnpm i
-        npx nx build @pinpin/user-service
+        npx nx build @pinpin/users-svc
     secrets:
       org_id: ${{ secrets.VERCEL_ORG_ID }}
-      project_id: ${{ secrets.VERCEL_USER_SERVICE_ID }}
+      project_id: ${{ secrets.VERCEL_USERS_SERVICE_ID }}
       token: ${{ secrets.VERCEL_TOKEN }}
 
-  deploy-post-service:
-    if: inputs.post_service == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+  deploy-posts-svc:
+    if: inputs.posts_svc == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
     uses: ./.github/workflows/wc-deploy-schema.yml
     with:
       environment: ${{ inputs.environment }}
       pre_built: true
       pre_built_cmd: |
         pnpm i
-        npx nx build @pinpin/post-service
+        npx nx build @pinpin/posts-svc
     secrets:
       org_id: ${{ secrets.VERCEL_ORG_ID }}
-      project_id: ${{ secrets.VERCEL_POST_SERVICE_ID }}
+      project_id: ${{ secrets.VERCEL_POSTS_SERVICE_ID }}
       token: ${{ secrets.VERCEL_TOKEN }}
